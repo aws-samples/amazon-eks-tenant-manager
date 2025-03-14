@@ -135,7 +135,7 @@ sequenceDiagram
     participant K8s as Kubernetes
 
     Dev->>Git: Push tenant configuration
-    Git->>Argo: Webhook trigger
+    Git<<->>Argo: Sync trigger
     Argo->>KCL: Process configuration
     KCL->>Argo: Generate K8s manifests
     Argo->>K8s: Apply resources
@@ -145,7 +145,7 @@ sequenceDiagram
     Note over Dev,K8s: Tenant resources created
     
     Dev->>Git: Push application code
-    Git->>Argo: Webhook trigger
+    Git<<->>Argo: Sync trigger
     Argo->>K8s: Deploy application
     K8s-->>Argo: Deployment status
 ```
@@ -236,6 +236,3 @@ Each environment follows the same structure, allowing for consistent yet customi
 
 ## Contributing
 Contributions are welcome! Please read our contributing guidelines first.
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
