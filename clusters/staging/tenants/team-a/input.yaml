@@ -1,0 +1,39 @@
+name: team-a
+env: staging
+namespaces:
+  - apps
+  - tools
+applications:
+  - name: guestbook
+    gitRepo:
+      url: https://github.com/argoproj/argocd-example-apps/
+      path: guestbook
+      branch: HEAD
+      targetNamespace: apps
+  - name: backend
+    gitRepo:
+      url: https://github.com/team-a/backend
+      path: k8s/overlays/prod
+      targetNamespace: apps
+accessControl:
+  groups:
+    - name: apps-admin
+      type: admin
+      namespacePattern: "apps"
+      iamRoles:
+        - roleArn: "arn:aws:iam::123456789012:role/team-a-admin"
+          username: "admin-user"
+resourceQuota:
+  cpu: "4"
+  memory: "8Gi"
+  pods: "20"
+limitRange:
+  default:
+    cpu: "500m"
+    memory: "512Mi"
+  defaultRequest:
+    cpu: "100m"
+    memory: "128Mi"
+  max:
+    cpu: "2"
+    memory: "2Gi"

@@ -1,0 +1,16 @@
+# clusters/production/tenants/project.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: tenants-prod
+  namespace: argocd
+spec:
+  description: "Production Tenant Manager Project"
+  sourceRepos:
+    - "https://github.com/jihed/amazon-eks-tenant-manager.git"
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'

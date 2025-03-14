@@ -1,0 +1,43 @@
+# clusters/dev/tenants/applicationset.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: dev-generator
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/jihed/amazon-eks-tenant-manager.git
+        revision: HEAD
+        files:
+        - path: "clusters/dev/tenants/*/input.yaml"
+  template:
+    metadata:
+      name: '{{path.basename}}-dev'
+      namespace: argocd
+      annotations:
+        debug.path: '{{path}}'
+        debug.basename: '{{path.basename}}'
+      labels:
+        tenant: '{{path.basename}}'
+        environment: dev
+    spec:
+      project: tenants-dev
+      source:
+        repoURL: https://github.com/jihed/amazon-eks-tenant-manager.git
+        targetRevision: HEAD
+        path: 'config'
+        plugin:
+          name: kcl-v1.0
+          parameters:
+            - name: TENANT_FILE
+              string: "../clusters/dev/tenants/{{path.basename}}/input.yaml"
+            - name: ENVIRONMENT
+              string: "dev"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
